@@ -28,9 +28,11 @@ ForwardPropagation = function(x,W=NULL,b=NULL,output='all')
         z[[i+1]] = W[[i]]%*%a[[i]]+b[[i]]
         a[[i+1]] = f(z[[i+1]])
     }
-    
     if (output=='all')
         return(list(a,z))
-    a[[n+1]]
+    if (output=='encoder')
+        return(a[[2]])
+    if (output=='single')
+        return(a[[n+1]])
 }
 
