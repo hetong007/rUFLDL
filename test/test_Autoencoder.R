@@ -10,27 +10,18 @@ for (i in 1:6)
 
 
 #Autoencoder with small number of hidden layers
-tmp=ParameterInitializer(c(6,2,6))
-W = tmp[[1]]
-b = tmp[[2]]
-
-model = Autoencoder(x,W,b,alpha=0.1,lambda=0,maxStep=10000)
+model = Autoencoder(x,nodes=2,alpha=0.1,lambda=0,maxStep=10000)
 W = model[[1]]
 b = model[[2]]
 fitted = apply(x,1,ForwardPropagation,W,b,'single')
 fitted = t(fitted)
-plot(fitted,x)
+plot(fitted,x,pch=20)
 
 #Autoencoder with sparsity penalty of hidden layers
-tmp=ParameterInitializer(c(6,20,6))
-W = tmp[[1]]
-b = tmp[[2]]
-
-model = SparseAutoencoder(x,W,b,
-                          alpha=0.1,beta=0.1,lambda=0,rho=0.1,
+model = SparseAutoencoder(x,nodes=20,alpha=0.1,beta=0.1,lambda=0,rho=0.1,
                           maxStep=10000)
 W = model[[1]]
 b = model[[2]]
 fitted = apply(x,1,ForwardPropagation,W,b,'single')
 fitted = t(fitted)
-plot(fitted,x)
+plot(fitted,x,pch=20)

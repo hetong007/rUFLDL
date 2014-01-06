@@ -10,52 +10,37 @@ for (i in 1:6)
 
 y = as.numeric(x[,1]*x[,4]+x[,2]-x[,6]>0)
 
-
-tmp=ParameterInitializer(c(6,10,1))
-W = tmp[[1]]
-b = tmp[[2]]
-
-model = Backpropagation(x[1:1000,],y[1:1000],W,b,
+#Primary Backpropagation
+model = Backpropagation(x[1:1000,],y[1:1000],node=10,
                         alpha=0.1,lambda=0,maxStep=10000)
 W = model[[1]]
 b = model[[2]]
 fitted = apply(x[1:1000,],1,ForwardPropagation,W,b,'single')
 pred = apply(x[1001:2000,],1,ForwardPropagation,W,b,'single')
 
-require(AUC)
 auc(roc(fitted,as.factor(y[1:1000])))
 auc(roc(pred,as.factor(y[1001:2000])))
 
-
-feature = FeatureExtract(x,whitening='ZCA',
-                         layers=c(6,2,6),sparsity=FALSE)
-tmp=ParameterInitializer(c(2,10,1))
-W = tmp[[1]]
-b = tmp[[2]]
-model = Backpropagation(feature[1:1000,],y[1:1000],W,b,
+#Autoencoder
+feature = FeatureExtract(x,whitening='ZCA',nodes=2,sparsity=FALSE)
+model = Backpropagation(feature[1:1000,],y[1:1000],nodes=10,
                         alpha=0.1,lambda=0,maxStep=10000)
 W = model[[1]]
 b = model[[2]]
 fitted = apply(feature[1:1000,],1,ForwardPropagation,W,b,'single')
 pred = apply(feature[1001:2000,],1,ForwardPropagation,W,b,'single')
 
-require(AUC)
 auc(roc(fitted,as.factor(y[1:1000])))
 auc(roc(pred,as.factor(y[1001:2000])))
 
-
-feature = FeatureExtract(x,whitening='ZCA',
-                         layers=c(6,40,6),sparsity=TRUE)
-tmp=ParameterInitializer(c(40,10,1))
-W = tmp[[1]]
-b = tmp[[2]]
-model = Backpropagation(feature[1:1000,],y[1:1000],W,b,
+#Sparse Autoencoder
+feature = FeatureExtract(x,whitening='ZCA',nodes=40,sparsity=TRUE)
+model = Backpropagation(feature[1:1000,],y[1:1000],nodes=10,
                         alpha=0.1,lambda=0,maxStep=2000)
 W = model[[1]]
 b = model[[2]]
 fitted = apply(feature[1:1000,],1,ForwardPropagation,W,b,'single')
 pred = apply(feature[1001:2000,],1,ForwardPropagation,W,b,'single')
 
-require(AUC)
 auc(roc(fitted,as.factor(y[1:1000])))
 auc(roc(pred,as.factor(y[1001:2000])))

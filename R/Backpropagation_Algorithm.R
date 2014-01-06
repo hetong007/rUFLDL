@@ -1,4 +1,4 @@
-Backpropagation = function(x,y,W,b,alpha,lambda,maxStep)
+Backpropagation = function(x,y,nodes=5,W=NULL,b=NULL,alpha,lambda,maxStep)
 {
     f = function(z) 1/(1+exp(-z))
     df = function(z) f(z)*(1-f(z))
@@ -7,8 +7,19 @@ Backpropagation = function(x,y,W,b,alpha,lambda,maxStep)
     steps = 1
     m = nrow(x)
     ind = sample(1:m,maxStep,replace=T)
-    dx = x[ind,]
-    dy = y[ind]
+    if (is.vector(x))
+        x = as.matrix(x)
+    if (is.vector(y))
+        y = as.matrix(y)
+    dx = x[ind,,drop=FALSE]
+    dy = y[ind,,drop=FALSE]
+    
+    if (is.null(W) || is.null(b))
+    {
+        tmp = ParameterInitializer(c(ncol(x),nodes,ncol(y)))
+        W = tmp[[1]]
+        b = tmp[[2]]
+    }
     
     stop_condition = FALSE
     cat('\r')
@@ -22,7 +33,7 @@ Backpropagation = function(x,y,W,b,alpha,lambda,maxStep)
         n = length(a)
         
         delta = a
-        delta[[n]] = -(dy[steps]-a[[n]])*df(z[[n]])
+        delta[[n]] = -(dy[steps,]-a[[n]])*df(z[[n]])
         for (i in (n-1):2)
             delta[[i]] = (t(W[[i]])%*%delta[[i+1]])*df(z[[i]])
         for (i in (n-1):1)

@@ -10,18 +10,13 @@ if (choice>0.5) {
     y = as.numeric(apply(x[,1:2],1,g)>runif(2000))
 }
 
-tmp=ParameterInitializer(c(5,100,1))
-W = tmp[[1]]
-b = tmp[[2]]
-
-model = Backpropagation(x[1:1000,],y[1:1000],W,b,
+model = Backpropagation(x[1:1000,],y[1:1000],nodes=100,
                         alpha=0.1,lambda=0,maxStep=10000)
 W = model[[1]]
 b = model[[2]]
 fitted = apply(x[1:1000,],1,ForwardPropagation,W,b,'single')
 pred = apply(x[1001:2000,],1,ForwardPropagation,W,b,'single')
 
-require(AUC)
 auc(roc(fitted,as.factor(y[1:1000])))
 auc(roc(pred,as.factor(y[1001:2000])))
 

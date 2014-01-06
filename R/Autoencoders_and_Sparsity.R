@@ -1,42 +1,13 @@
-Autoencoder = function(x,W,b,alpha,lambda,maxStep)
+Autoencoder = function(x,nodes=5,alpha,lambda,maxStep)
 {
-    f = function(z) 1/(1+exp(-z))
-    df = function(z) f(z)*(1-f(z))
-    
-    #Using stochastic gradient descent
-    steps = 1
-    m = nrow(x)
-    ind = sample(1:m,maxStep,replace=T)
-    dx = x[ind,]
-    
-    stop_condition = FALSE
-    cat('\r')
-    while(!stop_condition)
-    {
-        if (steps%%100==0)
-            cat(steps,'\r')
-        tmp = ForwardPropagation(dx[steps,],W,b)
-        a = tmp[[1]]
-        z = tmp[[2]]
-        n = length(a)
-        
-        delta = a
-        delta[[n]] = -(dx[steps,]-a[[n]])*df(z[[n]])
-        for (i in (n-1):2)
-            delta[[i]] = (t(W[[i]])%*%delta[[i+1]])*df(z[[i]])
-        for (i in (n-1):1)
-        {
-            W[[i]] = W[[i]]-alpha*(delta[[i+1]]%*%t(a[[i]])+lambda*W[[i]])
-            b[[i]] = b[[i]]-alpha*delta[[i+1]]
-        }
-        if (steps>=maxStep)
-            stop_condition = TRUE
-        steps = steps+1
-    }
-    list(W,b)
+    if (is.vector(x) || ncol(x)==1)
+        stop('No need to encode!')
+    model = Backpropagation(x=x,y=x,nodes=nodes,alpha=alpha,lambda=lambda,
+                            maxStep=maxStep)
+    model
 }
 
-SparseAutoencoder = function(x,W,b,alpha,beta,lambda,rho,maxStep)
+SparseAutoencoder = function(x,nodes,alpha,beta,lambda,rho,maxStep)
 {
     f = function(z) 1/(1+exp(-z))
     df = function(z) f(z)*(1-f(z))
@@ -45,7 +16,13 @@ SparseAutoencoder = function(x,W,b,alpha,beta,lambda,rho,maxStep)
     steps = 1
     m = nrow(x)
     ind = sample(1:m,maxStep,replace=T)
+    if (is.vector(x) || ncol(x)==1)
+        stop('No need to encode!')
     dx = x[ind,]
+    
+    tmp = ParameterInitializer(c(ncol(x),nodes,ncol(x)))
+    W = tmp[[1]]
+    b = tmp[[2]]
     
     stop_condition = FALSE
     cat('\r')
