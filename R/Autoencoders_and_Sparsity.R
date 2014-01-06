@@ -58,8 +58,8 @@ SparseAutoencoder = function(x,W,b,alpha,beta,lambda,rho,maxStep)
         z = tmp[[2]]
         n = length(a)
         
-        b2 = do.call(cbind,rep(list(b[[1]]),nrow(x)))
-        a2 = W[[1]]%*%t(x)+b2#matrix(rep(b[[1]],nrow(x)),ncol=nrow(x))
+        #b2 = do.call(cbind,rep(list(b[[1]]),nrow(x)))
+        a2 = W[[1]]%*%t(x)+as.vector(b[[1]])#b2#matrix(rep(b[[1]],nrow(x)),ncol=nrow(x))
         r = rowMeans(a2)
         r = beta*((1-rho)/(1-r)-rho/r)
         

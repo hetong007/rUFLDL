@@ -1,4 +1,4 @@
-FeatureExtract = function(x,whitening=NULL,layers,sparsity=FALSE)
+FeatureExtract = function(x,whitening=NULL,layers,sparsity=FALSE,maxStep=10000,output='feature')
 {
     if (!is.null(whitening))
     {
@@ -16,13 +16,17 @@ FeatureExtract = function(x,whitening=NULL,layers,sparsity=FALSE)
     if (sparsity)
         model = SparseAutoencoder(x,W,b,
                                   alpha=0.1,beta=0.1,lambda=0,rho=0.1,
-                                  maxStep=10000)
+                                  maxStep=maxStep)
     else
-        model = Autoencoder(x,W,b,alpha=0.1,lambda=0,maxStep=10000)
+        model = Autoencoder(x,W,b,alpha=0.1,lambda=0,maxStep=maxStep)
     
     W = model[[1]]
     b = model[[2]]
     
-    feature = apply(x,1,ForwardPropagation,W,b,output='encoder')
-    t(feature)
+    if (output=='feature')
+    {
+        feature = apply(x,1,ForwardPropagation,W,b,output='encoder')
+        return(t(feature))
+    }
+    return(list(W,b))
 }

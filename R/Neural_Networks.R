@@ -18,14 +18,12 @@ ForwardPropagation = function(x,W=NULL,b=NULL,output='all')
     if (is.null(W) || is.null(b))
         stop('Not enough input.')
     n = length(W)
-    if (n!=length(b))
-        stop('Parameters\' lengths differs')
     a = vector(n+1,mode='list')
     a[[1]] = x
     z = a
     for (i in 1:n)
     {
-        z[[i+1]] = W[[i]]%*%a[[i]]+b[[i]]
+        z[[i+1]] = W[[i]]%*%a[[i]]+as.vector(b[[i]])
         a[[i+1]] = f(z[[i+1]])
     }
     if (output=='all')
