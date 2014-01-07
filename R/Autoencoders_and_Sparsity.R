@@ -2,8 +2,8 @@ Autoencoder = function(x,nodes=5,alpha,lambda,maxStep)
 {
     if (is.vector(x) || ncol(x)==1)
         stop('No need to encode!')
-    model = Backpropagation(x=x,y=x,nodes=nodes,alpha=alpha,lambda=lambda,
-                            maxStep=maxStep)
+    model = Backpropagation(x=x,y=x,nodes=nodes,mission='regression',
+                            alpha=alpha,lambda=lambda,maxStep=maxStep)
     model
 }
 

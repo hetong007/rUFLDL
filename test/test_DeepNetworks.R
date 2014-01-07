@@ -13,9 +13,8 @@ y = as.numeric(x[,1]*x[,4]+x[,2]-x[,6]>0)
 model = DeepNetworks(x[1:1000,],y[1:1000])
 W = model[[1]]
 b = model[[2]]
-fitted = apply(x[1:1000,],1,ForwardPropagation,W,b,'single')
-pred = apply(x[1001:2000,],1,ForwardPropagation,W,b,'single')
+fitted = t(apply(x[1:1000,],1,ForwardPropagation,W,b,'single'))
+pred = t(apply(x[1001:2000,],1,ForwardPropagation,W,b,'single'))
 
-require(AUC)
-auc(roc(fitted,as.factor(y[1:1000])))
-auc(roc(pred,as.factor(y[1001:2000])))
+auc(roc(fitted[,ncol(fitted)],as.factor(y[1:1000])))
+auc(roc(pred[,ncol(pred)],as.factor(y[1001:2000])))

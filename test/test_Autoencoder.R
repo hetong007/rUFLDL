@@ -1,4 +1,4 @@
-x = matrix(rnorm(6000),ncol=6)
+x = matrix(runif(6000),ncol=6)
 x[,1] = runif(1000,min=0,max=0.1)
 x[,2] = x[,1]+5
 x[,3] = x[,2]*5
