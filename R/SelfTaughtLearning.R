@@ -1,5 +1,5 @@
 FeatureExtract = function(x,whitening=NULL,nodes,sparsity=FALSE,
-                          maxStep=10000,output='feature')
+                          maxStep=2000,output='feature')
 {
     if (is.vector(x) || ncol(x)==1)
         stop('No need to encode!')
@@ -25,7 +25,7 @@ FeatureExtract = function(x,whitening=NULL,nodes,sparsity=FALSE,
     
     if (output=='feature')
     {
-        feature = apply(x,1,ForwardPropagation,W,b,output='encoder')
+        feature = ForwardPropagation(x,W,b,output='encoder')
         return(t(feature))
     }
     return(list(W,b))

@@ -15,8 +15,8 @@ model = Backpropagation(x[1:1000,],y[1:1000],node=10,mission='classification',
                         alpha=0.1,lambda=0,maxStep=10000)
 W = model[[1]]
 b = model[[2]]
-fitted = t(apply(x[1:1000,],1,ForwardPropagation,W,b,'single'))
-pred = t(apply(x[1001:2000,],1,ForwardPropagation,W,b,'single'))
+fitted = t(ForwardPropagation(x[1:1000,],W,b,'single'))
+pred = t(ForwardPropagation(x[1001:2000,],W,b,'single'))
 
 auc(roc(fitted[,ncol(fitted)],as.factor(y[1:1000])))
 auc(roc(pred[,ncol(pred)],as.factor(y[1001:2000])))
@@ -25,11 +25,11 @@ auc(roc(pred[,ncol(pred)],as.factor(y[1001:2000])))
 feature = FeatureExtract(x,whitening='ZCA',nodes=2,sparsity=FALSE)
 model = Backpropagation(feature[1:1000,],y[1:1000],nodes=10,
                         mission='classification',
-                        alpha=0.1,lambda=0,maxStep=10000)
+                        alpha=0.1,lambda=0,maxStep=500)
 W = model[[1]]
 b = model[[2]]
-fitted = t(apply(feature[1:1000,],1,ForwardPropagation,W,b,'single'))
-pred = t(apply(feature[1001:2000,],1,ForwardPropagation,W,b,'single'))
+fitted = t(ForwardPropagation(feature[1:1000,],W,b,'single'))
+pred = t(ForwardPropagation(feature[1001:2000,],W,b,'single'))
 
 auc(roc(fitted[,ncol(fitted)],as.factor(y[1:1000])))
 auc(roc(pred[,ncol(pred)],as.factor(y[1001:2000])))
@@ -41,8 +41,8 @@ model = Backpropagation(feature[1:1000,],y[1:1000],nodes=10,
                         alpha=0.1,lambda=0,maxStep=2000)
 W = model[[1]]
 b = model[[2]]
-fitted = t(apply(feature[1:1000,],1,ForwardPropagation,W,b,'single'))
-pred = t(apply(feature[1001:2000,],1,ForwardPropagation,W,b,'single'))
+fitted = t(ForwardPropagation(feature[1:1000,],W,b,'single'))
+pred = t(ForwardPropagation(feature[1001:2000,],W,b,'single'))
 
 auc(roc(fitted[,ncol(fitted)],as.factor(y[1:1000])))
 auc(roc(pred[,ncol(pred)],as.factor(y[1001:2000])))
