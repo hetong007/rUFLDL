@@ -10,18 +10,18 @@ for (i in 1:6)
 
 
 #Autoencoder with small number of hidden layers
-model = Autoencoder(x,nodes=2,alpha=0.1,lambda=0,maxStep=10000)
+model = Autoencoder(x,nodes=2,alpha=0.1,lambda=0,maxStep=1000)
 W = model[[1]]
 b = model[[2]]
-fitted = apply(x,1,ForwardPropagation,W,b,'single')
+fitted = ForwardPropagation(x,W,b,'single')
 fitted = t(fitted)
 plot(fitted,x,pch=20)
 
 #Autoencoder with sparsity penalty of hidden layers
 model = SparseAutoencoder(x,nodes=20,alpha=0.1,beta=0.1,lambda=0,rho=0.1,
-                          maxStep=10000)
+                          maxStep=2000)
 W = model[[1]]
 b = model[[2]]
-fitted = apply(x,1,ForwardPropagation,W,b,'single')
+fitted = ForwardPropagation(x,W,b,'single')
 fitted = t(fitted)
 plot(fitted,x,pch=20)

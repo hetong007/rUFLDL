@@ -28,7 +28,10 @@ Backpropagation = function(x,y,nodes=5,W=NULL,b=NULL,
             mny = 0
             mxy = 1
         }
-        dy = t(matrix(y))
+        if (is.vector(y))
+            dy = t(matrix(y))
+        else
+            dy = t(y)
     }
     else
         stop('Invalid mission.')
