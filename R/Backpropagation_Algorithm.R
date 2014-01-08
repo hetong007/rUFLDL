@@ -1,24 +1,26 @@
-Backpropagation = function(x,y,nodes=5,mission='classification',W=NULL,b=NULL,alpha,lambda
-                           ,maxStep)
+Backpropagation = function(x,y,nodes=5,W=NULL,b=NULL,
+                           mission='classification',classifier='logistic',
+                           alpha,lambda,maxStep)
 {
     f = function(z) as.vector(1/(1+exp(-z)))
     df = function(z) as.vector(f(z)*(1-f(z)))
     
-    #Using stochastic gradient descent
-    steps = 1
+    #Using batch gradient descent
+        
     m = nrow(x)
-    ind = sample(1:m,maxStep,replace=T)
-    if (is.vector(x))
-        x = as.matrix(x)
+    #ind = sample(1:m,maxStep,replace=T)
     if (mission=='classification')
     {
         k = length(unique(y))
         dy = NULL
         for (i in 0:(k-1))
             dy = cbind(dy,as.numeric(y==i))
+        dy = t(dy)
     }
     else if (mission=='regression')
     {
+        if (classifier=='softmax')
+            stop('Softmax is not for Regression missions')
         mny = min(y)
         mxy = max(y)
         if (mny>=0 && mxy<=1)
@@ -26,27 +28,29 @@ Backpropagation = function(x,y,nodes=5,mission='classification',W=NULL,b=NULL,al
             mny = 0
             mxy = 1
         }
-        dy = as.matrix(y)
+        dy = t(matrix(y))
     }
     else
         stop('Invalid mission.')
-    dx = x[ind,,drop=FALSE]
-    dy = dy[ind,,drop=FALSE]
+    #dx = x[ind,,drop=FALSE]
+    #dy = dy[ind,,drop=FALSE]
     
     if (is.null(W) || is.null(b))
     {
-        tmp = ParameterInitializer(c(ncol(x),nodes,ncol(dy)))
+        tmp = ParameterInitializer(c(ncol(x),nodes,nrow(dy)))
         W = tmp[[1]]
         b = tmp[[2]]
     }
     
     stop_condition = FALSE
+    steps = 1
     cat('\r')
     while(!stop_condition)
     {
         if (steps%%100==0)
             cat(steps,'\r')
-        tmp = ForwardPropagation(dx[steps,],W,b)
+        #tmp = ForwardPropagation(dx[steps,],W,b)
+        tmp = ForwardPropagation(x,W,b)
         a = tmp[[1]]
         z = tmp[[2]]
         n = length(a)
@@ -54,15 +58,22 @@ Backpropagation = function(x,y,nodes=5,mission='classification',W=NULL,b=NULL,al
         delta = a
 
         if (mission=='classification')
-            delta[[n]] = -(dy[steps,]-a[[n]])*df(z[[n]])
+        {
+            if (classifier=='logistic')
+                delta[[n]] = -(dy-a[[n]])*df(z[[n]])
+            else if (classifier=='softmax')
+                delta[[n]] = -(dy-a[[n]])
+            else
+                stop('Classifier not exist')
+        }
         else
-            delta[[n]] = -((dy[steps,]-mny)/(mxy-mny)-a[[n]])*df(z[[n]])
+            delta[[n]] = -((dy-mny)/(mxy-mny)-a[[n]])*df(z[[n]])
         for (i in (n-1):2)
             delta[[i]] = (t(W[[i]])%*%delta[[i+1]])*df(z[[i]])
         for (i in (n-1):1)
         {
-            W[[i]] = W[[i]]-alpha*(delta[[i+1]]%*%t(a[[i]])+lambda*W[[i]])
-            b[[i]] = b[[i]]-alpha*delta[[i+1]]
+            W[[i]] = W[[i]]-alpha*(delta[[i+1]]%*%t(a[[i]])/m+lambda*W[[i]])
+            b[[i]] = b[[i]]-alpha*delta[[i+1]]/m
         }
 
         if (steps>=maxStep)

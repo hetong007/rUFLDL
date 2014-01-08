@@ -18,6 +18,10 @@ ForwardPropagation = function(x,W=NULL,b=NULL,output='all')
     if (is.null(W) || is.null(b))
         stop('Not enough input.')
     n = length(W)
+    if (!is.matrix(x))
+        x = matrix(x)
+    else
+        x = t(x)
     a = vector(n+1,mode='list')
     a[[1]] = x
     z = a

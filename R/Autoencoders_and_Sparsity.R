@@ -12,7 +12,8 @@ SparseAutoencoder = function(x,nodes,alpha,beta,lambda,rho,maxStep)
     f = function(z) 1/(1+exp(-z))
     df = function(z) f(z)*(1-f(z))
     
-    #Using stochastic gradient descent
+    #Using batch gradient descent
+    
     steps = 1
     m = nrow(x)
     ind = sample(1:m,maxStep,replace=T)
