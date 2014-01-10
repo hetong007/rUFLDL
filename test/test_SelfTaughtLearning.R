@@ -12,7 +12,7 @@ y = as.numeric(x[,1]*x[,4]+x[,2]-x[,6]>0)
 
 #Primary Backpropagation
 model = Backpropagation(x[1:1000,],y[1:1000],node=10,mission='classification',
-                        alpha=0.1,lambda=0,maxStep=10000)
+                        alpha=0.1,lambda=0,maxStep=5000)
 W = model[[1]]
 b = model[[2]]
 fitted = t(ForwardPropagation(x[1:1000,],W,b,'single'))
@@ -38,7 +38,7 @@ auc(roc(pred[,ncol(pred)],as.factor(y[1001:2000])))
 feature = FeatureExtract(x,whitening='ZCA',nodes=40,sparsity=TRUE)
 model = Backpropagation(feature[1:1000,],y[1:1000],nodes=10,
                         mission='classification',
-                        alpha=0.1,lambda=0,maxStep=2000)
+                        alpha=0.1,lambda=0,maxStep=500)
 W = model[[1]]
 b = model[[2]]
 fitted = t(ForwardPropagation(feature[1:1000,],W,b,'single'))
