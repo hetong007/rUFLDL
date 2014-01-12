@@ -10,9 +10,9 @@ FeatureExtract = function(x,whitening=NULL,nodes,sparsity=FALSE,
         else if (whitening=='ZCA')
             x = Whitening(x,type='ZCA')
     }
-    if (nodes<ncol(x) && sparsity)
-        stop('No need to use sparse Autoencoder, 
-             please check your layer setting.')
+    #if (nodes<ncol(x) && sparsity)
+        #stop('No need to use sparse Autoencoder, 
+             #please check your layer setting.')
     
     if (sparsity)
         model = SparseAutoencoder(x,nodes,alpha=0.1,beta=0.1,lambda=0,rho=0.1,

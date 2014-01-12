@@ -36,8 +36,7 @@ SparseAutoencoder = function(x,nodes,alpha,beta,lambda,rho,maxStep)
     cat('\r')
     while(!stop_condition)
     {
-        if (steps%%100==0)
-            cat(steps,'\r')
+        cat(steps,'\r')
         tmp = ForwardPropagation(x,W,b)
         a = tmp[[1]]
         z = tmp[[2]]

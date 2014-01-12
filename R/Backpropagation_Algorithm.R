@@ -1,5 +1,5 @@
 Backpropagation = function(x,y,nodes=5,W=NULL,b=NULL,
-                           mission='classification',classifier='logistic',
+                           mission='classification',
                            alpha,lambda,maxStep)
 {
     f = function(z) as.vector(1/(1+exp(-z)))
@@ -19,8 +19,6 @@ Backpropagation = function(x,y,nodes=5,W=NULL,b=NULL,
     }
     else if (mission=='regression')
     {
-        if (classifier=='softmax')
-            stop('Softmax is not for Regression missions')
         mny = min(y)
         mxy = max(y)
         if (mny>=0 && mxy<=1)
@@ -50,8 +48,7 @@ Backpropagation = function(x,y,nodes=5,W=NULL,b=NULL,
     cat('\r')
     while(!stop_condition)
     {
-        if (steps%%100==0)
-            cat(steps,'\r')
+        cat(steps,'\r')
         #tmp = ForwardPropagation(dx[steps,],W,b)
         tmp = ForwardPropagation(x,W,b)
         a = tmp[[1]]
@@ -61,22 +58,16 @@ Backpropagation = function(x,y,nodes=5,W=NULL,b=NULL,
         delta = a
 
         if (mission=='classification')
-        {
-            if (classifier=='logistic')
-                delta[[n]] = -(dy-a[[n]])*df(z[[n]])
-            else if (classifier=='softmax')
-                delta[[n]] = -(dy-a[[n]])
-            else
-                stop('Classifier not exist')
-        }
+            delta[[n]] = -(dy-a[[n]])*df(z[[n]])
         else
             delta[[n]] = -((dy-mny)/(mxy-mny)-a[[n]])*df(z[[n]])
+        
         for (i in (n-1):2)
             delta[[i]] = (t(W[[i]])%*%delta[[i+1]])*df(z[[i]])
         for (i in (n-1):1)
         {
             W[[i]] = W[[i]]-alpha*(delta[[i+1]]%*%t(a[[i]])/m+lambda*W[[i]])
-            b[[i]] = b[[i]]-alpha*delta[[i+1]]/m
+            b[[i]] = b[[i]]-rowMeans(alpha*delta[[i+1]])
         }
 
         if (steps>=maxStep)

@@ -2,15 +2,16 @@ load('MNIST/data/train.rda')
 x = as.matrix(train[1:2000,-1])
 y = train[1:2000,1]
 
-
-model = DeepNetworks(x,y,nodes_1=500,maxStep_1=1000,sparsity_1=FALSE,
-                     nodes_2=500,maxStep_2=3000,sparsity_2=FALSE,
-                     alpha=0.1,lambda=3e-3,maxStep_back = 5000)
+model = DeepNetworks(x,y,nodes_1=500,maxStep_1=50,sparsity_1=TRUE,
+                     nodes_2=500,maxStep_2=50,sparsity_2=TRUE,
+                     alpha=0.1,lambda=3e-3,maxStep_back = 100)
 W = model[[1]]
 b = model[[2]]
-fitted = t(apply(x[1:1000,],1,ForwardPropagation,W,b,'single'))
+fitted = ForwardPropagation(x[1:1000,],W,b,'single')
+fitted = t(fitted)
 fitted = apply(fitted,1,which.max)-1
-pred = t(apply(x[1001:2000,],1,ForwardPropagation,W,b,'single'))
+pred = ForwardPropagation(x[1001:2000,],W,b,'single')
+pred = t(pred)
 pred = apply(pred,1,which.max)-1
 
 table(as.factor(fitted),as.factor(y[1:1000]))
