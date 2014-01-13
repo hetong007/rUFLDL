@@ -1,13 +1,25 @@
-Autoencoder = function(x,nodes=5,alpha,lambda,maxStep)
+Autoencoder = function(x,nodes=5,corruption_level=NULL,alpha,lambda,maxStep)
 {
     if (is.vector(x) || ncol(x)==1)
         stop('No need to encode!')
-    model = Backpropagation(x=x,y=x,nodes=nodes,mission='regression',
+    y = x
+    if (!is.null(corruption_level))
+    {
+        len = length(x)
+        n = floor(len*corruption_level)
+        if (n>0)
+        {
+            ind = sample(1:len,n)
+            x[ind] = 0
+        }
+    }
+    model = Backpropagation(x=x,y=y,nodes=nodes,mission='regression',
                             alpha=alpha,lambda=lambda,maxStep=maxStep)
     model
 }
 
-SparseAutoencoder = function(x,nodes,alpha,beta,lambda,rho,maxStep)
+SparseAutoencoder = function(x,nodes,corruption_level=NULL,
+                             alpha,beta,lambda,rho,maxStep)
 {
     f = function(z) as.vector(1/(1+exp(-z)))
     df = function(z) as.vector(f(z)*(1-f(z)))
@@ -16,6 +28,17 @@ SparseAutoencoder = function(x,nodes,alpha,beta,lambda,rho,maxStep)
     
     m = nrow(x)
     y = x
+    
+    if (!is.null(corruption_level))
+    {
+        len = length(x)
+        n = floor(len*corruption_level)
+        if (n>0)
+        {
+            ind = sample(1:len,n)
+            x[ind] = 0
+        }
+    }
     #ind = sample(1:m,maxStep,replace=T)
 
     mny = min(y)

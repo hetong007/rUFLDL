@@ -2,8 +2,8 @@ load('MNIST/data/train.rda')
 x = as.matrix(train[1:2000,-1])
 y = train[1:2000,1]
 
-model = DeepNetworks(x,y,nodes_1=500,maxStep_1=100,sparsity_1=TRUE,
-                     nodes_2=500,maxStep_2=100,sparsity_2=TRUE,
+model = DeepNetworks(x,y,nodes_1=500,maxStep_1=200,sparsity_1=TRUE,
+                     nodes_2=500,maxStep_2=200,sparsity_2=TRUE,maxStep_3=3000,
                      alpha=0.1,lambda=3e-3,maxStep_back = 200)
 W = model[[1]]
 b = model[[2]]
