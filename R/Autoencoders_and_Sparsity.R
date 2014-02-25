@@ -1,4 +1,5 @@
-Autoencoder = function(x,nodes=5,corruption_level=NULL,alpha,lambda,maxStep)
+Autoencoder = function(x,nodes=5,corruption_level=NULL,alpha,lambda,maxStep,
+                       linearity = FALSE)
 {
     if (is.vector(x) || ncol(x)==1)
         stop('No need to encode!')
@@ -14,12 +15,13 @@ Autoencoder = function(x,nodes=5,corruption_level=NULL,alpha,lambda,maxStep)
         }
     }
     model = Backpropagation(x=x,y=y,nodes=nodes,mission='regression',
-                            alpha=alpha,lambda=lambda,maxStep=maxStep)
+                            alpha=alpha,lambda=lambda,maxStep=maxStep,
+                            linearity=linearity)
     model
 }
 
 SparseAutoencoder = function(x,nodes,corruption_level=NULL,
-                             alpha,beta,lambda,rho,maxStep)
+                             alpha,beta,lambda,rho,maxStep,linearity = FALSE)
 {
     f = function(z) as.vector(1/(1+exp(-z)))
     df = function(z) as.vector(f(z)*(1-f(z)))
@@ -60,7 +62,10 @@ SparseAutoencoder = function(x,nodes,corruption_level=NULL,
     while(!stop_condition)
     {
         cat(steps,'\r')
-        tmp = ForwardPropagation(x,W,b)
+        if (linearity)
+            tmp = ForwardPropagation(x,W,b,last='linear')
+        else
+            tmp = ForwardPropagation(x,W,b)
         a = tmp[[1]]
         z = tmp[[2]]
         n = length(a)
@@ -69,7 +74,10 @@ SparseAutoencoder = function(x,nodes,corruption_level=NULL,
         r = W[[1]]%*%t(x)+as.vector(b[[1]])
         r = beta*((1-rho)/(1-r)-rho/r)/m
         
-        delta[[n]] = -((dy-mny)/(mxy-mny)-a[[n]])*df(z[[n]])
+        if (linearity)
+            delta[[n]] = -(dy-a[[n]])
+        else
+            delta[[n]] = -((dy-mny)/(mxy-mny)-a[[n]])*df(z[[n]])
         for (i in (n-1):2)
             delta[[i]] = (t(W[[i]])%*%delta[[i+1]]+r)*df(z[[i]])
         for (i in (n-1):1)

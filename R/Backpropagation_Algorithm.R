@@ -1,6 +1,6 @@
 Backpropagation = function(x,y,nodes=5,W=NULL,b=NULL,
                            mission='classification',
-                           alpha,lambda,maxStep)
+                           alpha,lambda,maxStep,linearity = FALSE)
 {
     f = function(z) as.vector(1/(1+exp(-z)))
     df = function(z) as.vector(f(z)*(1-f(z)))
@@ -8,7 +8,6 @@ Backpropagation = function(x,y,nodes=5,W=NULL,b=NULL,
     #Using batch gradient descent
         
     m = nrow(x)
-    #ind = sample(1:m,maxStep,replace=T)
     if (mission=='classification')
     {
         k = length(unique(y))
@@ -33,8 +32,6 @@ Backpropagation = function(x,y,nodes=5,W=NULL,b=NULL,
     }
     else
         stop('Invalid mission.')
-    #dx = x[ind,,drop=FALSE]
-    #dy = dy[ind,,drop=FALSE]
     
     if (is.null(W) || is.null(b))
     {
@@ -50,14 +47,19 @@ Backpropagation = function(x,y,nodes=5,W=NULL,b=NULL,
     {
         cat(steps,'\r')
         #tmp = ForwardPropagation(dx[steps,],W,b)
-        tmp = ForwardPropagation(x,W,b)
+        if (linearity)
+            tmp = ForwardPropagation(x,W,b,last='linear')
+        else
+            tmp = ForwardPropagation(x,W,b)
         a = tmp[[1]]
         z = tmp[[2]]
         n = length(a)
         
         delta = a
 
-        if (mission=='classification')
+        if (linearity)
+            delta[[n]] = -(dy-a[[n]])
+        else if (mission=='classification')
             delta[[n]] = -(dy-a[[n]])*df(z[[n]])
         else
             delta[[n]] = -((dy-mny)/(mxy-mny)-a[[n]])*df(z[[n]])

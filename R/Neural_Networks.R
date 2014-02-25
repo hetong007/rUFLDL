@@ -45,11 +45,22 @@ ForwardPropagation = function(x,W=NULL,b=NULL,output='all',last='logistic')
             z[[i+1]] = W[[i]]%*%a[[i]]+as.vector(b[[i]])
             a[[i+1]] = f(z[[i+1]])
         }
-        i=n;
+        i=n
         z[[i+1]] = W[[n]]%*%a[[n]]
         a[[i+1]] = exp(z[[i+1]])
         cs = Diagonal(x=1/colSums(a[[i+1]]))
         a[[i+1]] = as.matrix(a[[i+1]] %*% cs)
+    }
+    else if (last=='linear')
+    {
+        for (i in 1:(n-1))
+        {
+            z[[i+1]] = W[[i]]%*%a[[i]]+as.vector(b[[i]])
+            a[[i+1]] = f(z[[i+1]])
+        }
+        i=n
+        z[[i+1]] = W[[i]]%*%a[[i]]+as.vector(b[[i]])
+        a[[i+1]] = z[[i+1]]
     }
     else
         stop('Invalid last')
