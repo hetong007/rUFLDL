@@ -1,7 +1,7 @@
 load('MNIST/data/train.rda')
 
-tr_ind = 1:1000
-te_ind = 1001:2000
+tr_ind = 1:20000
+te_ind = 20001:42000
 
 ind = c(tr_ind,te_ind)
 x = as.matrix(train[ind,-1])
@@ -27,4 +27,4 @@ sum(diag(table(as.factor(fitted),as.factor(y[tr_ind]))))/
 table(as.factor(pred),as.factor(y[te_ind]))
 sum(diag(table(as.factor(pred),as.factor(y[te_ind]))))/
     sum(table(as.factor(pred),as.factor(y[te_ind])))
-#expected to be 0.848
+#expected to be >0.85
